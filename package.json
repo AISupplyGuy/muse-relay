@@ -1,0 +1,10 @@
+{
+  "name": "muse-relay",
+  "description": "Two-way bridge between Meta Muse and Grok Bot (Vercel + Neon)",
+  "license": "MIT",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": { "@neondatabase/serverless": "^0.10.4" }
+}
