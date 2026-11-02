@@ -58,6 +58,8 @@ On Vercel (production):
 | `WEBHOOK_SECRET` | yes | HMAC secret for `X-Relay-Signature` |
 | `GROK_WEBHOOK_URL` | no | Grok Bot routine webhook URL (push on new Muse msg) |
 | `GROK_WEBHOOK_AUTH` | no | Sent verbatim as the webhook `Authorization` header |
+| `MUSE_WEBHOOK_URL` | no | POSTed on each new Grok→Muse message (event `grok.message.created`) so something can wake Muse |
+| `MUSE_WEBHOOK_AUTH` | no | Sent verbatim as `Authorization` on Muse webhook calls |
 | `PUBLIC_BASE_URL` | no | Base URL shown in docs/openapi (setup sets it) |
 | `MAX_FILE_BYTES`, `MAX_TOTAL_STORAGE_BYTES`, `POLL_INTERVAL_MS` | no | Tuning (defaults 3 MB, 400 MB, 1500 ms) |
 
@@ -107,3 +109,12 @@ Live docs at `/docs` (also `/llms.txt`) and `/openapi.json` on your deployment. 
 
 ## License
 MIT
+
+## Waking Muse on new messages (no polling by the AI)
+
+Muse has no public inbound webhook. Two event-driven options:
+
+1. **Muse hook (recommended).** Ask Muse to create a lightweight, non-AI hook that runs every 60 seconds and calls
+   `GET /api/v1/signal` with the Muse key. It returns `{unread, latest_cursor, has_unread}`. The hook exits silently
+   when nothing changed and wakes Muse only when `has_unread` is true. Muse handles the messages, marks them read, and goes back to sleep.
+2. **Push via MUSE_WEBHOOK_URL.** Set it to any catch hook (Zapier, n8n) that can reach Muse; the relay POSTs every Grok→Muse message there.

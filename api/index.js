@@ -84,6 +84,7 @@ export default async function handler(req, res) {
     // --- REST for Muse ---
     if (path.startsWith('/api/v1/')) {
       if (!keyEq(presentedKey(req), process.env.MUSE_KEY)) return send(res, 401, { error: 'unauthorized: send the Muse API key as "Authorization: Bearer <key>"' }, { 'www-authenticate': 'Bearer' });
+      if (path === '/api/v1/signal' && req.method === 'GET') return send(res, 200, await store.signal('muse'));
       if (path === '/api/v1/ask') {
         if (req.method !== 'POST') return send(res, 405, { error: 'method not allowed' });
         const b = await readBody(req);
