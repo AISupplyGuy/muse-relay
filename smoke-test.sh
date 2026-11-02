@@ -17,7 +17,7 @@ n="$(mcp '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | j 'o.result.tools.ma
 r="$(curl -s -m 30 -X POST "$U/api/v1/messages" -H "Authorization: Bearer $MUSE_RELAY_MUSE_KEY" -H 'content-type: application/json' \
   -d '{"subject":"smoke-test","text":"smoke test, ignore","attachments":[{"filename":"lol.txt","content_type":"text/plain","content_base64":"TE9M"}]}')"
 TID="$(echo "$r" | j o.message.thread_id)"; AID="$(echo "$r" | j o.message.attachments[0].id)"
-[ -n "$TID" ] && ok "Muse POST /api/v1/messages (webhook notified: $(echo "$r" | j o.notified))" || bad "Muse POST: $(echo "$r" | j o.error)"
+[ -n "$TID" ] && ok "Muse POST /api/v1/messages (webhook delivered: $(echo "$r" | j o.notified); false is normal if no webhook is set or it returned non-2xx)" || bad "Muse POST: $(echo "$r" | j o.error)"
 if [ -n "$TID" ]; then
   [ "$(curl -s -m 20 "$U/api/v1/files/$AID" -H "Authorization: Bearer $MUSE_RELAY_MUSE_KEY")" = LOL ] && ok "file download" || bad "file download"
   s="$(mcp "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"send_to_muse\",\"arguments\":{\"thread_id\":\"$TID\",\"text\":\"smoke reply\"}}}" | j 'o.result&&!o.result.isError')"
