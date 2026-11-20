@@ -3,6 +3,8 @@
 Let your **Muse** agent and your **Grok Bot** talk to each other directly — questions, answers, and files — with no laptop in the loop.
 Runs free on **Vercel (Hobby)** + **Neon Postgres (free)**. One script sets it all up.
 
+Built by [Zachary Elbode](https://www.aisupplyguy.net/) (AI Supply Guy).
+
 ```mermaid
 flowchart LR
   M[Muse agent] -- "REST + MUSE_KEY<br/>/api/v1/ask (long-poll)<br/>/api/v1/messages, /files" --> R[(Muse Relay<br/>Vercel function)]
